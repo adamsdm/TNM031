@@ -1,14 +1,13 @@
 
 public class Server {
 
-	private static final String PASSWORD = "123456";
-	private static final String KEYSTORE_PATH = "../SharedAssets/LIUkeystore.ks";
+	private final int PORT = 8000;
 	
+	private static final String KEYSTORE_PASSWORD = "123456";
+	private static final String TRUSTSTORE_PASSWORD = "abcdefg";
 	
-	public Server(){
-		
-	}
-	
+	private static final String KEYSTORE_PATH = "assets/lab3keystore.ks";
+	private static final String TRUSTSTORE_PATH = "assets/lab3truststore.ks";
 	
 	public static void main(String[] args) {
 	
