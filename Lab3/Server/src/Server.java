@@ -17,11 +17,12 @@ public class Server {
 	private int port = 8000;
 	private static final int DEFAULT_PORT = 8189;
 	
-	private static final String KEYSTORE_PASSWORD = "123456";
-	private static final String TRUSTSTORE_PASSWORD = "abcdefg";
+	private static final String KEYSTORE = "../assets/jpatkeystore.ks";
+	private static final String TRUSTSTORE = "../assets/jpattruststore.ks";
+
+	private static final String STOREPASSWD = "changeit";
+	private static final String ALIASPASSWD = "changeit";
 	
-	private static final String KEYSTORE_PATH = "../assets/lab3keystore.ks";
-	private static final String TRUSTSTORE_PATH = "../assets/lab3truststore.ks";
 	
 	/** Constructor
 	 * 
@@ -32,16 +33,16 @@ public class Server {
 	}
 	
 	public void run(){
-		
+		System.out.println(">>> SSLSERVER: Waiting for connection...");
 		try {
 			KeyStore ks = KeyStore.getInstance("JCEKS");
-			ks.load( new FileInputStream( KEYSTORE_PATH ), KEYSTORE_PASSWORD.toCharArray() );
+			ks.load( new FileInputStream( KEYSTORE ), STOREPASSWD.toCharArray() );
 			
 			KeyStore ts = KeyStore.getInstance("JCEKS");
-			ts.load( new FileInputStream( TRUSTSTORE_PATH ), TRUSTSTORE_PASSWORD.toCharArray() );
+			ts.load( new FileInputStream( TRUSTSTORE ), STOREPASSWD.toCharArray() );
 			
 			KeyManagerFactory kmf = KeyManagerFactory.getInstance("SUNX509");
-			kmf.init(ks, TRUSTSTORE_PASSWORD.toCharArray());
+			kmf.init(ks, ALIASPASSWD.toCharArray());
 			
 			TrustManagerFactory tmf = TrustManagerFactory.getInstance("SUNx509");
 			tmf.init(ts);
@@ -53,7 +54,9 @@ public class Server {
 			SSLServerSocket sss = (SSLServerSocket) sslServerFactory.createServerSocket(port);
 			sss.setEnabledCipherSuites( sss.getSupportedCipherSuites() );
 			SSLSocket incoming = (SSLSocket) sss.accept();
-			
+
+			System.out.println(">>> SSLSERVER: Connection established");
+
 			BufferedReader in;
 			in = new BufferedReader( new InputStreamReader(incoming.getInputStream() ) );
 			
@@ -61,10 +64,8 @@ public class Server {
 			
 			String str;
 			
-			
-			
 			while(! (str = in.readLine()).equals("") ){
-				
+
 				double result = 0;
 				StringTokenizer st = new StringTokenizer(str);
 				
@@ -73,12 +74,13 @@ public class Server {
 						Double d = new Double(st.nextToken());
 						result += d.doubleValue();
 					}
-					out.print("The result is " + result);
+					out.println("The result is " + result);
 				} catch (NumberFormatException nfe) {
 					out.println("Sorry, your list contains an invalid number");
 				}
 			}
 			
+			System.out.println(">>> SSLSERVER: Shutting down");
 			incoming.close();
 			
 		} catch (Exception e) {

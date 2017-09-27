@@ -18,12 +18,13 @@ public class Client {
 	private int port;
 	
 	private static final int DEFAULT_PORT = 8189;
+	
+	private static final String KEYSTORE = "../assets/jpatkeystore.ks";
+	private static final String TRUSTSTORE = "../assets/jpattruststore.ks";
 
 	private static final String STOREPASSWD = "changeit";
 	private static final String ALIASPASSWD = "changeit"; 
 	
-	private static final String KEYSTORE_PATH = "../assets/clientKeystore.ks";
-	private static final String TRUSTSTORE_PATH = "../assets/clientTruststore.ks";
 	
 	
 	
@@ -37,10 +38,10 @@ public class Client {
 		try {
 			
 			KeyStore ks = KeyStore.getInstance("JCEKS");
-			ks.load(new FileInputStream(KEYSTORE_PATH), STOREPASSWD.toCharArray());
+			ks.load(new FileInputStream(KEYSTORE), STOREPASSWD.toCharArray());
 			
 			KeyStore ts = KeyStore.getInstance("JCEKS");
-			ts.load(new FileInputStream(TRUSTSTORE_PATH), STOREPASSWD.toCharArray());
+			ts.load(new FileInputStream(TRUSTSTORE), STOREPASSWD.toCharArray());
 			
 			KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
 			kmf.init(ks, ALIASPASSWD.toCharArray());
@@ -62,7 +63,7 @@ public class Client {
 			String numbers = "1.2 3.4 5.6";
 			System.out.println("Adding the numbers " + numbers + " together securely");
 			socketOut.println(numbers);
-			
+
 			System.out.println(socketIn.readLine());
 			socketOut.println("");
 					
