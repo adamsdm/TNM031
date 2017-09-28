@@ -57,15 +57,23 @@ public class Client {
 			client.setEnabledCipherSuites(client.getSupportedCipherSuites());
 			
 			BufferedReader socketIn ;
+			BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in));
 			socketIn = new BufferedReader(new InputStreamReader(client.getInputStream()));
 			PrintWriter socketOut = new PrintWriter(client.getOutputStream(), true);
 			
-			String numbers = "1.2 3.4 5.6";
-			System.out.println("Adding the numbers " + numbers + " together securely");
-			socketOut.println(numbers);
-
-			System.out.println(socketIn.readLine());
-			socketOut.println("");
+			
+			
+			String numbers;
+			System.out.println("Enter numbers, type \"quit\" to exit");
+			System.out.print("> ");
+			while(! (numbers = inputReader.readLine()).equals("quit") ){
+				System.out.println("Adding the numbers " + numbers + " together securely");
+				socketOut.println(numbers);
+	
+				System.out.println(socketIn.readLine());
+				System.out.print("> ");
+				
+			}
 					
 		} catch (Exception e) {
 			System.out.println(e);

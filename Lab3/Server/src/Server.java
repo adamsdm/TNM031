@@ -64,8 +64,9 @@ public class Server {
 			
 			String str;
 			
-			while(! (str = in.readLine()).equals("") ){
-
+			while(! (str = in.readLine()).equals("quit") ){
+				
+				System.out.println(">>> SSLSERVER: Recieved input " + str);
 				double result = 0;
 				StringTokenizer st = new StringTokenizer(str);
 				
@@ -74,9 +75,9 @@ public class Server {
 						Double d = new Double(st.nextToken());
 						result += d.doubleValue();
 					}
-					out.println("The result is " + result);
+					out.println(">>> SSLSERVER: The result is " + result);
 				} catch (NumberFormatException nfe) {
-					out.println("Sorry, your list contains an invalid number");
+					out.println(">>> SSLSERVER: Sorry, your list contains an invalid number");
 				}
 			}
 			
