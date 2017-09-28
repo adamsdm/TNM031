@@ -117,6 +117,7 @@ public class Client {
 				line = br.readLine(); 
 			}
 			
+			br.close();
 			socketOut.println("DONE");
 		
 		} catch (FileNotFoundException e) {

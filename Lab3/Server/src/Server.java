@@ -114,7 +114,7 @@ public class Server {
 				out.println(line);
 				line = br.readLine();
 			}
-			
+			br.close();
 			out.println("DONE");
 			
 		} catch (IOException e) {
@@ -140,7 +140,7 @@ public class Server {
 				writer.println(input);
 				
 			}
-			
+			writer.close();
 			
 			out.println(">>> SSLSERVER: Upload complete");
 		} catch (IOException e) {
@@ -184,6 +184,7 @@ public class Server {
 	    }
 		output+= ']';
 	    
+		
 		out.println(output);
 	}
 	
