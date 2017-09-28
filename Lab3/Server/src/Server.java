@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.security.KeyStore;
 
@@ -136,7 +137,22 @@ public class Server {
 	}
 	
 	private void deleteFile(){
-		out.println(">>> SSLSERVER: Removing file");
+		try {
+			String filename = in.readLine();
+			
+			File file = new File(FILES_FOLDER + filename);
+			
+			if(file.delete()){
+				out.println(">>> SSLSERVER: Removed file: " + filename);
+			} else {
+				out.println(">>> SSLSERVER: Couldn't remove file " + filename);
+			}
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	// TODO: Not working properly, if client requests -ls no more commands can be inputed

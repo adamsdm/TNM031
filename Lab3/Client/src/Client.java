@@ -151,7 +151,16 @@ public class Client {
 	}
 	
 	private void deleteFile(){
-		System.out.println("> Enter filename: ");
+		System.out.print("> Enter filename: ");
+		try {
+			String filename = inputReader.readLine();
+			socketOut.println("-del");
+			socketOut.println(filename);
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public static void main(String[] args) {
