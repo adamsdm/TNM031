@@ -1,9 +1,10 @@
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.security.KeyStore;
-import java.util.StringTokenizer;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -19,11 +20,13 @@ public class Server {
 	
 	private static final String KEYSTORE = "../assets/jpatkeystore.ks";
 	private static final String TRUSTSTORE = "../assets/jpattruststore.ks";
+	private static final String FILES_FOLDER = "../assets/files/";
 
 	private static final String STOREPASSWD = "changeit";
 	private static final String ALIASPASSWD = "changeit";
 	
-	
+	private PrintWriter out;
+	private BufferedReader in;
 	/** Constructor
 	 * 
 	 * @param port The port that the server will listen to
@@ -57,27 +60,30 @@ public class Server {
 
 			System.out.println(">>> SSLSERVER: Connection established");
 
-			BufferedReader in;
 			in = new BufferedReader( new InputStreamReader(incoming.getInputStream() ) );
-			
-			PrintWriter out = new PrintWriter(incoming.getOutputStream(), true);
+			out = new PrintWriter(incoming.getOutputStream(), true);
 			
 			String str;
 			
 			while(! (str = in.readLine()).equals("quit") ){
 				
-				System.out.println(">>> SSLSERVER: Recieved input " + str);
-				double result = 0;
-				StringTokenizer st = new StringTokenizer(str);
+				System.out.println(">>> SSLSERVER: Recieved input '" + str +"'");
 				
-				try {
-					while(st.hasMoreTokens()){
-						Double d = new Double(st.nextToken());
-						result += d.doubleValue();
-					}
-					out.println(">>> SSLSERVER: The result is " + result);
-				} catch (NumberFormatException nfe) {
-					out.println(">>> SSLSERVER: Sorry, your list contains an invalid number");
+				switch(str) {
+				case "-u":
+					recieveFile();
+					break;
+				case "-d":
+					sendFile();
+					break;
+				case "-del":
+					deleteFile();
+					break;
+				case "-ls":
+					listFiles();
+				default:
+					out.println(">>> SSLSERVER::USAGE: [-u] --upload file [-d] --download file [-del] --delete file [-ls] --list files");
+					break;
 				}
 			}
 			
@@ -89,6 +95,58 @@ public class Server {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	private void sendFile(){
+		
+		try {
+			String filename = in.readLine();
+			
+			System.out.println(">>> SSLSERVER: Sending file: " + filename);
+			
+			
+			
+			
+			out.println(">>> SSLSERVER: Download complete");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	private void recieveFile(){
+		try {
+			String filename = in.readLine();
+			
+			System.out.println(">>> SSLSERVER: Recieving file: " + filename);
+			out.println(">>> SSLSERVER: Upload complete");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void deleteFile(){
+		out.println(">>> SSLSERVER: Removing file");
+	}
+	
+	// TODO: Not working properly, if client requests -ls no more commands can be inputed
+	private void listFiles(){
+		File folder = new File(FILES_FOLDER);
+		File[] listOfFiles = folder.listFiles();
+		
+		String output = ">>> SSLSERVER: files on server [";
+
+		for (int i = 0; i < listOfFiles.length; i++) {
+	    	
+			if (listOfFiles[i].isFile()) {
+				output += listOfFiles[i].getName() + " ";
+	    	} else if (listOfFiles[i].isDirectory()) {
+	    		output += listOfFiles[i].getName() + "/ ";
+	    	}
+	    }
+		output+= ']';
+	    
+		out.println(output);
 	}
 	
 	

@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -25,8 +26,9 @@ public class Client {
 	private static final String STOREPASSWD = "changeit";
 	private static final String ALIASPASSWD = "changeit"; 
 	
-	
-	
+	private BufferedReader socketIn;
+	private PrintWriter socketOut;
+	private BufferedReader inputReader;
 	
 	public Client(InetAddress host, int port){
 		this.host = host;
@@ -56,20 +58,35 @@ public class Client {
 			SSLSocket client = (SSLSocket) sslFact.createSocket(host, port);
 			client.setEnabledCipherSuites(client.getSupportedCipherSuites());
 			
-			BufferedReader socketIn ;
-			BufferedReader inputReader = new BufferedReader(new InputStreamReader(System.in));
+			inputReader = new BufferedReader(new InputStreamReader(System.in));
 			socketIn = new BufferedReader(new InputStreamReader(client.getInputStream()));
-			PrintWriter socketOut = new PrintWriter(client.getOutputStream(), true);
+			socketOut = new PrintWriter(client.getOutputStream(), true);
 			
 			
 			
-			String numbers;
-			System.out.println("Enter numbers, type \"quit\" to exit");
+			String str;
 			System.out.print("> ");
-			while(! (numbers = inputReader.readLine()).equals("quit") ){
-				System.out.println("Adding the numbers " + numbers + " together securely");
-				socketOut.println(numbers);
-	
+			while(! (str = inputReader.readLine()).equals("quit") ){
+				
+				switch(str) {
+				case "-u":
+					sendFile();
+					break;
+				case "-d":
+					recieveFile();
+					break;
+				case "-del":
+					deleteFile();
+					break;
+				case "-ls":
+					socketOut.println("-ls");
+					break;
+				default:
+					System.out.println(">>> SSLCLIENT::USAGE: [-u] --upload file [-d] --download file [-del] --delete file [-ls] --list files");
+					System.out.print("> ");
+					continue; // Continue here since the nothing will be sent to the server
+				}
+
 				System.out.println(socketIn.readLine());
 				System.out.print("> ");
 				
@@ -79,6 +96,35 @@ public class Client {
 			System.out.println(e);
 			e.printStackTrace();
 		}
+	}
+	
+	private void sendFile(){
+		System.out.print("Enter filename: ");
+		
+		try {
+			String filename = inputReader.readLine();
+			socketOut.println("-u");
+			socketOut.println(filename);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	private void recieveFile(){
+		System.out.print("Enter filename: ");
+		
+		try {
+			String filename = inputReader.readLine();
+			socketOut.println("-d");
+			socketOut.println(filename);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void deleteFile(){
+		System.out.println("> Enter filename: ");
 	}
 	
 	public static void main(String[] args) {
