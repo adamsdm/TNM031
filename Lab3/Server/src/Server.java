@@ -130,6 +130,18 @@ public class Server {
 			String filename = in.readLine();
 			
 			System.out.println(">>> SSLSERVER: Recieving file: " + filename);
+			
+			PrintWriter writer = new PrintWriter(FILES_FOLDER + filename, "UTF-8");
+			
+			while(true){
+				String input = in.readLine();
+				if(input.equals("DONE"))
+					break;
+				writer.println(input);
+				
+			}
+			
+			
 			out.println(">>> SSLSERVER: Upload complete");
 		} catch (IOException e) {
 			e.printStackTrace();

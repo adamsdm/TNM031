@@ -1,5 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -104,9 +106,24 @@ public class Client {
 		
 		try {
 			String filename = inputReader.readLine();
+			BufferedReader br = new BufferedReader(new FileReader(FILES_FOLDER + filename));
+			
 			socketOut.println("-u");
 			socketOut.println(filename);
+			
+			String line = br.readLine();
+			while(line != null){
+				socketOut.println(line);
+				line = br.readLine(); 
+			}
+			
+			socketOut.println("DONE");
+		
+		} catch (FileNotFoundException e) {
+			System.out.println(">>> SSLCLIENT::ERROR::FILE_NOT_FOUND");
+			socketOut.println("asdf");
 		} catch (IOException e) {
+			System.out.println(">>> SSLSomething went wrong...");
 			e.printStackTrace();
 		}
 		
