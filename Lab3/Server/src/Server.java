@@ -1,9 +1,12 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.nio.file.NoSuchFileException;
 import java.security.KeyStore;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -98,20 +101,27 @@ public class Server {
 	}
 	
 	private void sendFile(){
-		
 		try {
 			String filename = in.readLine();
+			System.out.println(filename);
+			BufferedReader br = new BufferedReader(new FileReader(FILES_FOLDER + filename));
+			out.println("OK");
 			
-			System.out.println(">>> SSLSERVER: Sending file: " + filename);
+			// Start reading and sending file
+			String line = br.readLine();
+			while(line != null){
+				out.println(line);
+				line = br.readLine();
+			}
 			
+			out.println("DONE");
 			
-			
-			
-			out.println(">>> SSLSERVER: Download complete");
 		} catch (IOException e) {
+			out.println("FAIL");
 			e.printStackTrace();
 		}
 		
+		out.println(">>> SSLSERVER: Done");
 	}
 	
 	private void recieveFile(){

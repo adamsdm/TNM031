@@ -22,7 +22,8 @@ public class Client {
 	
 	private static final String KEYSTORE = "../assets/jpatkeystore.ks";
 	private static final String TRUSTSTORE = "../assets/jpattruststore.ks";
-
+	private static final String FILES_FOLDER = "../assets/files/";
+	
 	private static final String STOREPASSWD = "changeit";
 	private static final String ALIASPASSWD = "changeit"; 
 	
@@ -113,14 +114,40 @@ public class Client {
 	
 	private void recieveFile(){
 		System.out.print("Enter filename: ");
-		
 		try {
 			String filename = inputReader.readLine();
+			
 			socketOut.println("-d");
 			socketOut.println(filename);
+			
+			String status = socketIn.readLine();
+			
+			// IF file exists
+			if(status.equals("OK")){
+				
+				PrintWriter writer = new PrintWriter(FILES_FOLDER + filename, "UTF-8");
+				
+				while(true){
+					String input = socketIn.readLine();
+					
+					if(input.equals("DONE"))
+						break;
+					
+					writer.println(input);
+				}
+				
+				writer.close();
+				
+				
+				
+			} else {
+				System.out.println("CLIENT::ERROR::FILE_DOES_NOT_EXIST_ON_SERVER");
+			}
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 	}
 	
 	private void deleteFile(){
